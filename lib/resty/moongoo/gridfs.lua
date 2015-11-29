@@ -34,7 +34,14 @@ function _M.remove(self, id)
 end
 
 function _M.find_version(self, name, version)
-
+ --  Positive numbers are absolute and negative ones relative
+  local cursor = self._files:find({filename = name}, {_id = 1}):limit(-1)
+  cursor:sort({uploadDate = (version < 0)  and cbson.int(-1) or cbson.int(1)}):skip(version < 0 and (math.abs(version) - 1) or version)
+  local doc, err = cursor:next()
+  if not doc then
+    return nil, "No such file/version"
+  end
+  return doc._id
 end
 
 function _M.open(self, id)

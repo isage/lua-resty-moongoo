@@ -375,7 +375,10 @@ Returns number of chunks removed.
 
 ####find_version
 `<cbson.oid>id, <string>err = gridfsobj:find_version(<string>name, <number>version)`  
-_Not implemented yet_
+Find version of file, versions from 0 and upwards point to a specific version,  
+while version from -1 and downwards point to the most recently added version.  
+E.g. for file with 3 versions: 0, 1, 2 = -3, -2, -1  
+0 or -3 is oldest, while  -1 or 2 - newest.
 
 ####open
 `<string>gridfsfile, <string>err = gridfsobj:open(<cbson.oid>id)`  

@@ -12,12 +12,73 @@ Also, möngö is mongolian currency, and mungu is god in Swahili.
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Usage](#usage)
+  * [Synopsis](#synopsis)
   * [Moongoo methods](#moongoo-methods)
+    * [new](#new)
+    * [close](#close)
+    * [db](#db)
   * [Database methods](#database-methods)
+    * [collection](#collection)
+    * [gridfs](#gridfs)
+    * [cmd](#cmd)
   * [Collection methods](#collection-methods)
+    * [create](#create)
+    * [drop](#drop)
+    * [rename](#rename)
+    * [options](#options)
+    * [full_name](#full_name)
+    * [stats](#stats)
+    * [index_information](#index_information)
+    * [ensure_index](#ensure_index)
+    * [drop_index](#drop_index)
+    * [find](#find)
+    * [find_one](#find_one)
+    * [find_and_modify](#find_and_modify)
+    * [insert](#insert)
+    * [update](#update)
+    * [remove](#remove)
+    * [save](#save)
+    * [map_reduce](#map_reduce)
+    * [aggregate](#aggregate)
   * [Cursor methods](#cursor-methods)
+    * [clone](#clone)
+    * [tailable](#tailable)
+    * [await](#await)
+    * [comment](#comment)
+    * [hint](#hint)
+    * [max_scan](#max_scan)
+    * [max_time_ms](#max_time_ms)
+    * [read_preference](#read_preference)
+    * [snapshot](#snapshot)
+    * [sort](#sort)
+    * [skip](#skip)
+    * [limit](#limit)
+    * [next](#next)
+    * [rewind](#rewind)
+    * [all](#all)
+    * [count](#count)
+    * [explain](#explain)
+    * [distinct](#distinct)
   * [GridFS methods](#gridfs-methods)
+    * [list](#list)
+    * [remove](#remove-1)
+    * [find_version](#find_version)
+    * [open](#open)
+    * [create](#create-1)
   * [GridFS file methods](#gridfs-file-methods)
+    * [content_type](#content_type)
+    * [filename](#filename)
+    * [md5](#md5)
+    * [metadata](#metadata)
+    * [date](#date)
+    * [length](#length)
+    * [chumk_size](#chunk_size)
+    * [seek](#seek)
+    * [tell](#tell)
+    * [read](#read)
+    * [slurp](#slurp)
+    * [write](#write)
+    * [close](#close-1)
 * [Authors](#authors)
 * [Copyright and License](#copyright-and-license)
 
@@ -100,6 +161,8 @@ Issuing new read/write commands after will reopen connection.
 `<database>dbobj = mgobj:db(<string>name)`  
 Selects database to use.
 
+[Back to TOC](#table-of-contents)
+
 
 ###Database methods
 ####collection
@@ -120,6 +183,9 @@ For example, given [distinct](https://docs.mongodb.org/manual/reference/command/
 ```lua
   local result, error = dbobj:cmd( { distinct = "some.collection" }, { key = "somekey } )
 ```
+
+[Back to TOC](#table-of-contents)
+
 
 ###Collection methods
 ####create
@@ -214,6 +280,9 @@ Returns document, if opts.explain set to true.
 Returns collection object, if pipeline has `$out` command as last stage.  
 Returns new cursor object otherwise.
 
+[Back to TOC](#table-of-contents)
+
+
 ###Cursor methods
 
 Note: you can chain-call property/options functions.
@@ -278,7 +347,6 @@ Resets cursor position.
 `<array>documents, <string>error = cursorobj:all()`  
 Returns array, containing all documents found by query.
 
-
 ####count
 `<cbsin.uint>number = cursorobj:count()`  
 Returns number of documents, conforming to query.
@@ -290,6 +358,9 @@ Returns document with query plan explanation.
 ####distinct
 `<document>doc, <string>error = cursorobj:distinct(<string>key)`  
 Finds the distinct values for a specified field, according to query.
+
+[Back to TOC](#table-of-contents)
+
 
 
 ###GridFS methods
@@ -320,6 +391,9 @@ You **must** call gridfsfile:close(), or you'll end up with orphaned chunks.
 Safe mode is good for small files, however, as it stores entire file in memory, it's bad for big files.  
 Non-safe mode uses maximum of (chunkSize*2-1) bytes for any file.  
 As a side effect, you can :read() or :slurp() file (except for last chunk).
+
+[Back to TOC](#table-of-contents)
+
 
 
 ###GridFS file methods
@@ -375,13 +449,21 @@ Writes data to GridFS file.
 `<cbson.oid>id, <string>error = gridfsfile:close()`  
 Finalizes file by writing queued chunks and metadata.
 
+[Back to TOC](#table-of-contents)
+
+
+
 ##Authors
 
 Epifanov Ivan <isage.dna@gmail.com>
 
 [Back to TOC](#table-of-contents)
 
+
+
 ##Copyright and License
 
 This module is licensed under the WTFPL license.  
 (See LICENSE)
+
+[Back to TOC](#table-of-contents)

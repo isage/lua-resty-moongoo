@@ -17,9 +17,14 @@ local _M = {}
 
 local mt = { __index = _M }
 
-function _M.new(host, port)
+function _M.new(host, port, timeout)
+  local sock = socket()
+  if timeout then
+    sock:settimeout(timeout)
+  end
+
   return setmetatable({
-    sock = socket();
+    sock = sock;
     host = host;
     port = port;
     _id = 0;
@@ -33,8 +38,11 @@ function _M.connect(self, host, port)
 end
 
 function _M.close(self)
-  
-  return ngx and self.sock:setkeepalive() or self.sock:close()
+  ngx and self.sock:setkeepalive() or self.sock:close()
+end
+
+function _M.settimeout(self, ms)
+  self.sock:settimeout(ms)
 end
 
 function _M.send(self, data)

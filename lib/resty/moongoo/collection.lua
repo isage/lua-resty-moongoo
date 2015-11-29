@@ -155,6 +155,12 @@ function _M.options(self)
 end
 
 function _M.remove(self, query, single)
+  local query = query or {}
+
+  if getmetatable(cbson.oid("000000000000000000000000")) == getmetatable(query) then
+    query = { _id = query }
+  end
+
   local doc, err = self._db:cmd(
     { delete = self.name },
     {
@@ -211,6 +217,7 @@ end
 
 function _M.update(self, query, update, flags)
   local flags = flags or {}
+  local query = query or {}
 
   if getmetatable(cbson.oid("000000000000000000000000")) == getmetatable(query) then
     query = { _id = query }
@@ -273,15 +280,28 @@ end
 
 
 function _M.find(self, query, fields)
+  local query = query or {}
+  if getmetatable(cbson.oid("000000000000000000000000")) == getmetatable(query) then
+    query = { _id = query }
+  end
   return cursor.new(self, query, fields)
 end
 
 function _M.find_one(self, query, fields)
+  local query = query or {}
+  if getmetatable(cbson.oid("000000000000000000000000")) == getmetatable(query) then
+    query = { _id = query }
+  end
+
   return self:find(query, fields):limit(-1):next()
 end
 
 function _M.find_and_modify(self, query, opts)
   local query = query or {}
+  if getmetatable(cbson.oid("000000000000000000000000")) == getmetatable(query) then
+    query = { _id = query }
+  end
+
   local opts = opts or {}
   opts.query = query
 

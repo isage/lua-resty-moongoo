@@ -118,7 +118,10 @@ function _M.write(self, data)
   self._meta.length = self._meta.length + data:len()
 
   while self._buffer:len() >= self:chunk_size() do
-    self:_chunk()
+    local r, res = self:_chunk()
+    if not r then
+      return nil, err
+    end
   end
 end
 
@@ -200,6 +203,7 @@ function _M._chunk(self)
   if self._write_only then
     -- collect chunks for insert
     table.insert(self._chunks, {files_id = self:_files_id(), n = cbson.uint(n), data = data})
+    return true
   else
     -- insert immidiately, so we can read back (ugh)
     return self._gridfs._chunks:insert({{files_id = self:_files_id(), n = cbson.uint(n), data = data}})

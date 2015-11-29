@@ -26,11 +26,14 @@ function _M.new(uri)
   local wtimeout = conninfo.query and conninfo.query.wtimeoutMS or 1000
   local journal = conninfo.query and conninfo.query.journal or false
 
+  local stimeout = conninfo.socketTimeoutMS and conninfo.query.socketTimeoutMS or nil
+
   return setmetatable({ 
     connection = nil;
     w = w;
     wtimeout = wtimeout;
     journal = journal;
+    stimeout = stimeout;
     hosts = conninfo.hosts;
     default_db = conninfo.database;
     user = conninfo.user or nil;
@@ -56,7 +59,7 @@ function _M.connect(self)
   -- foreach host
   for k, v in ipairs(self.hosts) do
     -- connect
-    self.connection, err = connection.new(v.host, v.port)
+    self.connection, err = connection.new(v.host, v.port, self.stimeout)
     if not self.connection then
       return nil, err
     end
@@ -77,7 +80,7 @@ function _M.connect(self)
           string.gsub(ismaster.primary, "([^:]+):([^:]+)", function(host,port) mhost=host; mport=port end)
           self.connection:close()
           self.connection = nil
-          self.connection, err = connection.new(mhost, mport)
+          self.connection, err = connection.new(mhost, mport, self.stimeout)
           if not self.connection then
             return nil, err
           end
@@ -103,12 +106,15 @@ function _M.connect(self)
   return nil, "Can't connect to any of servers"
 end
 
-function _M.db(self, dbname)
-  return database.new(dbname, self)
+function _M.close(self)
+  if self.connection then
+    self.connection:close()
+    self.connection = nil
+  end
 end
 
-function _M.kill_cursors(self, id)
-  return self.connection:_kill_cursors(id)
+function _M.db(self, dbname)
+  return database.new(dbname, self)
 end
 
 return _M

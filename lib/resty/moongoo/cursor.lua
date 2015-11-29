@@ -138,7 +138,7 @@ end
 function _M.next(self)
   if self:_finished() then
     if self._id ~= cbson.uint(0) then
-      self._collection._db._moongoo:kill_cursors(self._id)
+      self._collection._db._moongoo.connection:kill_cursors(self._id)
       self._id = cbson.uint(0)
     end
     return nil, "no more data"
@@ -188,7 +188,7 @@ end
 function _M.rewind(self)
   self._started = false
   self._docs = {}
-  self._collection._db._moongoo:kill_cursors(self._id)
+  self._collection._db._moongoo.connection:kill_cursors(self._id)
   self._id = cbson.uint(0)
   return self
 end

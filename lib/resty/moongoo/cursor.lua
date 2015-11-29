@@ -128,7 +128,7 @@ function _M._build_query(self)
   if self._max_time_ms then ext['$maxTimeMS'] = self._max_time_ms end
   if self._read_preference then ext['$readPreference'] = self._read_preference end
   if self._snapshot then ext['$snapshot'] = true end
-  if self._sort then ext['$orderBy'] = self._orderBy end
+  if self._sort then ext['$orderby'] = self._sort end
 
   ext['$query'] = self._query
 

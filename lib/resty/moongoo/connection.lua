@@ -38,7 +38,11 @@ function _M.connect(self, host, port)
 end
 
 function _M.close(self)
-  ngx and self.sock:setkeepalive() or self.sock:close()
+  if ngx then
+    self.sock:setkeepalive()
+  else
+    self.sock:close()
+  end
 end
 
 function _M.settimeout(self, ms)

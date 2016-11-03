@@ -136,6 +136,11 @@ function _M._build_query(self)
 end
 
 function _M.next(self)
+  local moongoo, err = self._collection._db._moongoo:connect()
+  if not moongoo
+    return nil, err
+  end
+
   if self:_finished() then
     if self._id ~= cbson.uint(0) then
       self._collection._db._moongoo.connection:kill_cursors(self._id)

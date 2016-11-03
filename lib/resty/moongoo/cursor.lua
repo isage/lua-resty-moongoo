@@ -137,7 +137,7 @@ end
 
 function _M.next(self)
   local moongoo, err = self._collection._db._moongoo:connect()
-  if not moongoo
+  if not moongoo then
     return nil, err
   end
 

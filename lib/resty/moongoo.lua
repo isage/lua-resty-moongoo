@@ -25,6 +25,7 @@ function _M.new(uri)
   local w = conninfo.query and conninfo.query.w or 1
   local wtimeout = conninfo.query and conninfo.query.wtimeoutMS or 1000
   local journal = conninfo.query and conninfo.query.journal or false
+  local ssl = conninfo.query and conninfo.query.ssl or false
 
   local stimeout = conninfo.socketTimeoutMS and conninfo.query.socketTimeoutMS or nil
 
@@ -38,7 +39,8 @@ function _M.new(uri)
     default_db = conninfo.database;
     user = conninfo.user or nil;
     password = conninfo.password or "";
-    auth_algo = auth_algo
+    auth_algo = auth_algo,
+    ssl = ssl
   }, mt)
 end
 
@@ -65,6 +67,9 @@ function _M.connect(self)
     end
     local status, err = self.connection:connect()
     if status then
+      if self.ssl then
+        self.connection:handshake()
+      end
       local ismaster = self:db("admin"):_cmd("ismaster")
       if ismaster and ismaster.ismaster then
         -- auth
@@ -87,6 +92,9 @@ function _M.connect(self)
           local status, err = self.connection:connect()
           if not status then
             return nil, err
+          end
+          if self.ssl then
+            self.connection:handshake()
           end
           local ismaster = self:db("admin"):_cmd("ismaster")
           if ismaster and ismaster.ismaster then

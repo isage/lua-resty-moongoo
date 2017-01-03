@@ -147,6 +147,8 @@ Currently supported options are:
 * socketTimeoutMS - default is nil. It controls **both** connect and read/write timeout.  
   It's set to nil by default so you can control connect and read/write separately  
   with OpenResty lua_socket_connect_timeout, lua_socket_send_timeout and lua_socket_read_timeout.
+* ssl - default is false  
+  Use ssl for connection. Currently there's no support for CA or client certificates.
 
 Moongoo tries really hard to be smart, and opens connection only when needed,  
 searches for master node in replicaset, and uses relevant to mongodb version auth mechanism.  

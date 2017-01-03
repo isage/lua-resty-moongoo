@@ -37,6 +37,17 @@ function _M.connect(self, host, port)
   return self.sock:connect(self.host, self.port)
 end
 
+function _M.handshake(self)
+  if ngx then
+    self.sock:sslhandshake()
+  else
+    local ssl = require("ssl")
+    self.sock = ssl.wrap(self.sock, {mode = "client", protocol = "tlsv1_2"})
+    assert(self.sock)
+    self.sock:dohandshake()
+  end
+end
+
 function _M.close(self)
   if ngx then
     self.sock:setkeepalive()

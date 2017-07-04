@@ -29,7 +29,7 @@ function _M.new(uri)
 
   local stimeout = conninfo.socketTimeoutMS and conninfo.query.socketTimeoutMS or nil
 
-  return setmetatable({ 
+  return setmetatable({
     connection = nil;
     w = w;
     wtimeout = wtimeout;
@@ -119,6 +119,10 @@ function _M.close(self)
     self.connection:close()
     self.connection = nil
   end
+end
+
+function _M.get_reused_times(self)
+  return self.connection:get_reused_times()
 end
 
 function _M.db(self, dbname)

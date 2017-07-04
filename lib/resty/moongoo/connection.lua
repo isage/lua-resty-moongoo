@@ -56,6 +56,14 @@ function _M.close(self)
   end
 end
 
+function _M.get_reused_times(self)
+  if not self.sock then
+      return nil, "not initialized"
+  end
+
+  return self.sock:getreusedtimes()
+end
+
 function _M.settimeout(self, ms)
   self.sock:settimeout(ms)
 end
@@ -115,7 +123,7 @@ function _M._build_header(self, op, payload_size)
 end
 
 function _M._query(self, collection, query, to_skip, to_return, selector, flags)
-  local flags = { 
+  local flags = {
     tailable = flags and flags.tailable and 1 or 0,
     slaveok = flags and flags.slaveok and 1 or 0,
     notimeout = flags and flags.notimeout and 1 or 0,
@@ -126,11 +134,11 @@ function _M._query(self, collection, query, to_skip, to_return, selector, flags)
 
   local flagset = cbson.int_to_raw(
     cbson.int(
-      2   * flags["tailable"] + 
-      2^2 * flags["slaveok"] + 
-      2^4 * flags["notimeout"] + 
-      2^5 * flags["await"] + 
-      2^6 * flags["exhaust"] + 
+      2   * flags["tailable"] +
+      2^2 * flags["slaveok"] +
+      2^4 * flags["notimeout"] +
+      2^5 * flags["await"] +
+      2^6 * flags["exhaust"] +
       2^7 * flags["partial"]
     ),
   4)
@@ -140,7 +148,7 @@ function _M._query(self, collection, query, to_skip, to_return, selector, flags)
   local to_skip = cbson.int_to_raw(cbson.int(to_skip), 4)
   local to_return = cbson.int_to_raw(cbson.int(to_return), 4)
 
-  local size = 4 + #collection + 1 + 4 + 4 + #query + #selector 
+  local size = 4 + #collection + 1 + 4 + 4 + #query + #selector
 
   local header = self:_build_header(opcodes["OP_QUERY"], size)
 

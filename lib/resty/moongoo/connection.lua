@@ -58,7 +58,7 @@ end
 
 function _M.get_reused_times(self)
   if not self.sock then
-      return nil, "not initialized"
+    return nil, "not initialized"
   end
 
   return self.sock:getreusedtimes()
@@ -156,6 +156,30 @@ function _M._query(self, collection, query, to_skip, to_return, selector, flags)
 
   assert(self:send(data))
   return self:_handle_reply()
+end
+
+function _M._insert(self, collection, docs, flags)
+  encoded_docs = cbson.encode(docs)
+
+  local flags = {
+    continue_on_error = flags and flags.continue_on_error and 1 or 0
+  }
+
+  local flagset = cbson.int_to_raw(
+    cbson.int(
+      2 * flags["continue_on_error"]
+    ),
+  4)
+
+  local size = #collection + #encoded_docs
+  local header = self:_build_header(opcodes["OP_INSERT"], size)
+
+  local data = header .. flagset .. collection .. encoded_docs
+
+  assert(self:send(data))
+
+  -- Commented out for now since trying to handle invalid replies isn't working
+  -- return self:_handle_reply()
 end
 
 function _M._kill_cursors(self, id)

@@ -40,7 +40,8 @@ function _M.new(uri)
     user = conninfo.user or nil;
     password = conninfo.password or "";
     auth_algo = auth_algo,
-    ssl = ssl
+    ssl = ssl,
+    version = nil
   }, mt)
 end
 
@@ -70,6 +71,13 @@ function _M.connect(self)
       if self.ssl then
         self.connection:handshake()
       end
+      if not self.version then
+        query = self:db(self.default_db):_cmd({ buildInfo = 1 })
+        if query then
+          self.version = query.version
+        end
+      end
+
       local ismaster = self:db("admin"):_cmd("ismaster")
       if ismaster and ismaster.ismaster then
         -- auth
@@ -95,6 +103,12 @@ function _M.connect(self)
           end
           if self.ssl then
             self.connection:handshake()
+          end
+          if not self.version then
+            query = self:db(self.default_db):_cmd({ buildInfo = 1 })
+            if query then
+              self.version = query.version
+            end
           end
           local ismaster = self:db("admin"):_cmd("ismaster")
           if ismaster and ismaster.ismaster then

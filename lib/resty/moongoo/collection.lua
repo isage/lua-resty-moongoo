@@ -51,7 +51,7 @@ local function build_index_names(docs)
     if not v.name then
       local name = {}
       for n, d in pairs(v.key) do
-        table.insert(name, n) 
+        table.insert(name, n)
       end
       name = table.concat(name, '_')
       docs[k].name = name
@@ -69,22 +69,31 @@ function _M.insert(self,docs)
   end
   local docs, ids = ensure_oids(docs)
 
-  local doc, err = self._db:cmd(
-    { insert = self.name },
-    {
-      documents = docs,
-      ordered = true,
-      writeConcern = self:_build_write_concern()
-    }
-  )
+  local server_version = tonumber(string.sub(string.gsub(self._db._moongoo.version, "(%D)", ""), 1, 3))
 
-  if not doc then
-    return nil, err
+  if server_version < 254 then
+    local doc, err = self._db:insert(self:full_name(), docs)
+    if not doc then
+      return nil, err
+    end
+    return true
+  else
+    local doc, err = self._db:cmd(
+      { insert = self.name },
+      {
+        documents = docs,
+        ordered = true,
+        writeConcern = self:_build_write_concern()
+      }
+    )
+
+    if not doc then
+      return nil, err
+    end
+
+    return check_write_concern(doc, ids, doc.n)
   end
-
-  return check_write_concern(doc, ids, doc.n)
 end
-
 
 function _M.create(self, params)
   local params = params or {}

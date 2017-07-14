@@ -159,7 +159,7 @@ function _M._query(self, collection, query, to_skip, to_return, selector, flags)
 end
 
 function _M._insert(self, collection, docs, flags)
-  encoded_docs = cbson.encode(docs)
+  local encoded_docs = cbson.encode(docs)
 
   local flags = {
     continue_on_error = flags and flags.continue_on_error and 1 or 0
@@ -171,7 +171,7 @@ function _M._insert(self, collection, docs, flags)
     ),
   4)
 
-  local size = #collection + #encoded_docs
+  local size = 4 + #collection + #encoded_docs
   local header = self:_build_header(opcodes["OP_INSERT"], size)
 
   local data = header .. flagset .. collection .. encoded_docs

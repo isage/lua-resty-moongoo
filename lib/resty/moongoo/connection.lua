@@ -171,10 +171,10 @@ function _M._insert(self, collection, docs, flags)
     ),
   4)
 
-  local size = 4 + #collection + #encoded_docs
+  local size = 4 + 1 + #collection + #encoded_docs
   local header = self:_build_header(opcodes["OP_INSERT"], size)
 
-  local data = header .. flagset .. collection .. encoded_docs
+  local data = header .. flagset .. collection .. "\0" .. encoded_docs
 
   assert(self:send(data))
 

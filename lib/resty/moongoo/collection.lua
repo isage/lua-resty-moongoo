@@ -33,6 +33,32 @@ local function check_write_concern(doc, ...)
   return ...
 end
 
+function _M._get_last_error(self)
+  local write_concern = self:_build_write_concern()
+  local cmd = { getLastError = cbson.int(1), j = write_concern.j, w = write_concern.w, wtimeout = write_concern.wtimeout  }
+
+  local doc, err = self._db:cmd(cmd)
+  if not doc then
+    return nil, err
+  end
+
+  return doc
+end
+
+function _M._check_last_error(self, ...)
+  local cmd, err = self:_get_last_error()
+
+  if not cmd then
+    return nil, err
+  end
+
+  if tostring(cmd.err) == "null" then
+    return ...
+  end
+
+  return nil, tostring(cmd.err)
+end
+
 local function ensure_oids(docs)
   local docs = docs
   local ids = {}
@@ -60,7 +86,7 @@ local function build_index_names(docs)
   return docs
 end
 
-function _M.insert(self,docs)
+function _M.insert(self, docs)
   -- ensure we have oids
   if #docs == 0 then
     local newdocs = {}
@@ -72,11 +98,8 @@ function _M.insert(self,docs)
   local server_version = tonumber(string.sub(string.gsub(self._db._moongoo.version, "(%D)", ""), 1, 3))
 
   if server_version < 254 then
-    local doc, err = self._db:insert(self:full_name(), docs)
-    if not doc then
-      return nil, err
-    end
-    return true
+    self._db:insert(self:full_name(), docs)
+    return self:_check_last_error(ids)
   else
     local doc, err = self._db:cmd(
       { insert = self.name },
@@ -127,7 +150,6 @@ function _M.drop_index(self, name)
     return nil, err
   end
   return true
-
 end
 
 function _M.ensure_index(self, docs)
@@ -141,14 +163,11 @@ function _M.ensure_index(self, docs)
     return nil, err
   end
   return true
-
 end
-
 
 function _M.full_name(self)
   return self._db.name .. "." .. self.name
 end
-
 
 function _M.options(self)
   local doc, err = self._db:cmd(
@@ -287,7 +306,6 @@ function _M.map_reduce(self, map, reduce, flags)
   return self.new(doc.result, self._db)
 end
 
-
 function _M.find(self, query, fields)
   local query = query or {}
   if getmetatable(cbson.oid("000000000000000000000000")) == getmetatable(query) then
@@ -323,7 +341,6 @@ function _M.find_and_modify(self, query, opts)
   end
   return doc.value
 end
-
 
 function _M.aggregate(self, pipeline, opts)
   local opts = opts or {}

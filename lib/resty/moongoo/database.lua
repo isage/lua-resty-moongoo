@@ -62,17 +62,8 @@ function _M.insert(self, collection, docs)
 end
 
 function _M._insert(self, collection, docs)
-  local _,_,_,_,docs = self._moongoo.connection:_insert(collection, docs)
-
-  if not docs[1] then
-    return nil, "Empty reply from mongodb"
-  end
-
-  if not docs[1].ok or docs[1].ok == 0 then
-    return nil, docs[1].errmsg
-  end
-
-  return docs[1]
+  self._moongoo.connection:_insert(collection, docs)
+  return
 end
 
 

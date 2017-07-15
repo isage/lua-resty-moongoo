@@ -29,7 +29,7 @@ function _M.new(uri)
 
   local stimeout = conninfo.socketTimeoutMS and conninfo.query.socketTimeoutMS or nil
 
-  return setmetatable({ 
+  return setmetatable({
     connection = nil;
     w = w;
     wtimeout = wtimeout;
@@ -40,7 +40,8 @@ function _M.new(uri)
     user = conninfo.user or nil;
     password = conninfo.password or "";
     auth_algo = auth_algo,
-    ssl = ssl
+    ssl = ssl,
+    version = nil
   }, mt)
 end
 
@@ -70,6 +71,13 @@ function _M.connect(self)
       if self.ssl then
         self.connection:handshake()
       end
+      if not self.version then
+        query = self:db(self.default_db):_cmd({ buildInfo = 1 })
+        if query then
+          self.version = query.version
+        end
+      end
+
       local ismaster = self:db("admin"):_cmd("ismaster")
       if ismaster and ismaster.ismaster then
         -- auth
@@ -96,6 +104,12 @@ function _M.connect(self)
           if self.ssl then
             self.connection:handshake()
           end
+          if not self.version then
+            query = self:db(self.default_db):_cmd({ buildInfo = 1 })
+            if query then
+              self.version = query.version
+            end
+          end
           local ismaster = self:db("admin"):_cmd("ismaster")
           if ismaster and ismaster.ismaster then
             -- auth
@@ -119,6 +133,10 @@ function _M.close(self)
     self.connection:close()
     self.connection = nil
   end
+end
+
+function _M.get_reused_times(self)
+  return self.connection:get_reused_times()
 end
 
 function _M.db(self, dbname)

@@ -56,6 +56,14 @@ function _M.close(self)
   end
 end
 
+function _M.get_reused_times(self)
+  if not self.sock then
+    return nil, "not initialized"
+  end
+
+  return self.sock:getreusedtimes()
+end
+
 function _M.settimeout(self, ms)
   self.sock:settimeout(ms)
 end
@@ -115,7 +123,7 @@ function _M._build_header(self, op, payload_size)
 end
 
 function _M._query(self, collection, query, to_skip, to_return, selector, flags)
-  local flags = { 
+  local flags = {
     tailable = flags and flags.tailable and 1 or 0,
     slaveok = flags and flags.slaveok and 1 or 0,
     notimeout = flags and flags.notimeout and 1 or 0,
@@ -126,11 +134,11 @@ function _M._query(self, collection, query, to_skip, to_return, selector, flags)
 
   local flagset = cbson.int_to_raw(
     cbson.int(
-      2   * flags["tailable"] + 
-      2^2 * flags["slaveok"] + 
-      2^4 * flags["notimeout"] + 
-      2^5 * flags["await"] + 
-      2^6 * flags["exhaust"] + 
+      2   * flags["tailable"] +
+      2^2 * flags["slaveok"] +
+      2^4 * flags["notimeout"] +
+      2^5 * flags["await"] +
+      2^6 * flags["exhaust"] +
       2^7 * flags["partial"]
     ),
   4)
@@ -140,7 +148,7 @@ function _M._query(self, collection, query, to_skip, to_return, selector, flags)
   local to_skip = cbson.int_to_raw(cbson.int(to_skip), 4)
   local to_return = cbson.int_to_raw(cbson.int(to_return), 4)
 
-  local size = 4 + #collection + 1 + 4 + 4 + #query + #selector 
+  local size = 4 + #collection + 1 + 4 + 4 + #query + #selector
 
   local header = self:_build_header(opcodes["OP_QUERY"], size)
 
@@ -148,6 +156,33 @@ function _M._query(self, collection, query, to_skip, to_return, selector, flags)
 
   assert(self:send(data))
   return self:_handle_reply()
+end
+
+function _M._insert(self, collection, docs, flags)
+  local encoded_docs = {}
+  for k, doc in ipairs(docs) do
+    encoded_docs[k] = cbson.encode(doc)
+  end
+  string_docs = table.concat(encoded_docs)
+
+  local flags = {
+    continue_on_error = flags and flags.continue_on_error and 1 or 0
+  }
+
+  local flagset = cbson.int_to_raw(
+    cbson.int(
+      2 * flags["continue_on_error"]
+    ),
+  4)
+
+  local size = 4 + 1 + #collection + #string_docs
+  local header = self:_build_header(opcodes["OP_INSERT"], size)
+
+  local data = header .. flagset .. collection .. "\0" .. string_docs
+
+  assert(self:send(data))
+
+  return true -- Mongo doesn't send a reply
 end
 
 function _M._kill_cursors(self, id)
@@ -158,7 +193,7 @@ function _M._kill_cursors(self, id)
   local header = self:_build_header(opcodes["OP_KILL_CURSORS"], size)
   local data = header .. zero .. num .. id
   assert(self:send(data))
-  return true -- mongo doesn't care and doesn't send reply
+  return true -- Mongo doesn't send a reply
 end
 
 function _M._get_more(self, collection, number, cursor)

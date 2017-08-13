@@ -95,6 +95,8 @@ function _M.insert(self, docs)
   end
   local docs, ids = ensure_oids(docs)
 
+  self._db._moongoo:connect()
+
   local server_version = tonumber(string.sub(string.gsub(self._db._moongoo.version, "(%D)", ""), 1, 3))
 
   if server_version < 254 then

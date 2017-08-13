@@ -369,7 +369,7 @@ function _M.aggregate(self, pipeline, opts)
   end
 
   -- cursor
-  return cursor:new(self, {}, {}, false, doc.cursor.id):add_batch(doc.cursor.firstBatch)
+  return cursor.new(self, {}, {}, false, doc.cursor.id):add_batch(doc.cursor.firstBatch)
 end
 
 

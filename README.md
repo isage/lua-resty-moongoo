@@ -215,7 +215,7 @@ Returns full collection namespace (e.g. database.collection).
 Returns collection statistics.
 
 #### index_information
-`<document>result, <string>error = colobj:index_information()`  
+`<array>result, <string>error = colobj:index_information()`  
 Returns info about current indexes.
 
 #### ensure_index

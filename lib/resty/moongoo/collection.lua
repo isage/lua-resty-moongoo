@@ -225,7 +225,7 @@ function _M.index_information(self)
   if not doc then
     return nil, err
   end
-  return doc.cursor.firstBatch[1]
+  return doc.cursor.firstBatch
 end
 
 function _M.rename(self, to_name, drop)

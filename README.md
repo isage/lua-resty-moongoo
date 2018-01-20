@@ -129,7 +129,7 @@ mg:close()
 #### NOTE
 You **should** use cbson datatypes for anything other than strings, floats and bools.  
 All lua numbers are stored as floats.  
-Empty arrays are treated and stored as empty documents (may be changed in future).  
+Empty arrays are treated and stored as empty documents (you can use cbson.array() to forcibly store empty array in mongo).  
 nil lua values are ignored and not stored, due to nature of lua, use cbson.null.  
 nil values from mongo are decoded as cbson.null (use `somevar == cbson.null()` for comparison)  
 

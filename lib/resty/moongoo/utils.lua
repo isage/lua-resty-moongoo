@@ -28,7 +28,7 @@ end
 local counter = 0
 
 local function generate_oid()
-  local pid = ngx and ngx.var.pid or nil
+  local pid = ngx and ngx.worker.pid() or nil
   if not pid then
     if hasposix then
       pid = posix.getpid("pid")

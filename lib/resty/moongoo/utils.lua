@@ -32,11 +32,12 @@ if not ngx then
   counter = math.random(100)
 else
   local resty_random = require "resty.random"
+  local resty_string = require "resty.string"
   local strong_random = resty_random.bytes(16,true)
   while strong_random == nil do
     strong_random = resty_random.bytes(16,true)
   end
-  counter = strong_random
+  counter = resty_string.atoi(strong_random)
 end
 
 local function generate_oid()

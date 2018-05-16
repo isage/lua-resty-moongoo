@@ -27,6 +27,18 @@ end
 
 local counter = 0
 
+if not ngx then
+  math.randomseed(os.time())
+  counter = math.random(100)
+else
+  local resty_random = require "resty.random"
+  local strong_random = resty_random.bytes(16,true)
+  while strong_random == nil do
+    strong_random = resty_random.bytes(16,true)
+  end
+  counter = strong_random
+end
+
 local function generate_oid()
   local pid = ngx and ngx.worker.pid() or nil
   if not pid then

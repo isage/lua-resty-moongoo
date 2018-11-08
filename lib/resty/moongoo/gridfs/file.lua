@@ -148,7 +148,11 @@ function _M.close(self)
   self._gridfs._files:ensure_index({{ key = {filename = true}}})
   self._gridfs._chunks:ensure_index({ { key = {files_id = 1, n = 1}, unique = true } });
   -- compute md5
-  local file_md5 = self._gridfs._db:cmd({ filemd5 = self:_files_id(), root = self._gridfs._name }).md5
+  local res, err = self._gridfs._db:cmd({filemd5 = self:_files_id()}, {root = self._gridfs._name})
+  if not res then
+    return nil, err
+  end
+  local file_md5 = res.md5
   -- insert metadata
   local ids, n = self._gridfs._files:insert(self:_metadata(file_md5))
 

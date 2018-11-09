@@ -27,7 +27,7 @@ function _M.new(uri)
   local journal = conninfo.query and conninfo.query.journal or false
   local ssl = conninfo.query and conninfo.query.ssl or false
 
-  local stimeout = conninfo.socketTimeoutMS and conninfo.query.socketTimeoutMS or nil
+  local stimeout = conninfo.query.socketTimeoutMS and conninfo.query.socketTimeoutMS or nil
 
   return setmetatable({
     connection = nil;

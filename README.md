@@ -1,3 +1,5 @@
+## This project is on hiatus due to lack of free time (unless someone wants to sponsor it's development)
+
 # LUA-RESTY-MOONGOO
 
 Adding some lua moondust to the mongo goo

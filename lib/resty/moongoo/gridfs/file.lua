@@ -177,7 +177,7 @@ function _M._metadata(self, file_md5)
     _id          = self:_files_id(),
     length       = self:raw_length(),
     chunkSize    = self:raw_chunk_size(),
-    uploadDate   = cbson.date(os.time(os.date('!*t'))*1000),
+    uploadDate   = cbson.date(os.time()*1000),
     md5          = file_md5,
     filename     = self:filename() or nil,
     content_type = self:content_type() or nil,

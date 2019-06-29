@@ -45,7 +45,7 @@ function _M.find_version(self, name, version)
 end
 
 function _M.open(self, id)
-  return gfsfile.open(self, id)
+  return gfsfile.open(self, cbson.oid(id))
 end
 
 

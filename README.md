@@ -373,7 +373,7 @@ Finds the distinct values for a specified field, according to query.
 Returns array, containing unique filenames.
 
 #### remove
-`<cbson.uint>num, <string>err = gridfsobj:remove(<cbson.oid>id)`  
+`<cbson.uint>num, <string>err = gridfsobj:remove(<cbson.oid or string>id)`  
 Removes file from GridFS.  
 Returns number of chunks removed.
 
@@ -385,11 +385,11 @@ E.g. for file with 3 versions: 0, 1, 2 = -3, -2, -1
 0 or -3 is oldest, while  -1 or 2 - newest.
 
 #### open
-`<string>gridfsfile, <string>err = gridfsobj:open(<cbson.oid>id)`  
+`<gridfs.file>gridfsfile, <string>err = gridfsobj:open(<cbson.oid or string>id)`  
 Opens GridFS file for reading.
 
 #### create
-`<string>gridfsfile = gridfsobj:create(<string>filename, <table>opts, <bool>safe)`  
+`<gridfs.file>gridfsfile = gridfsobj:create(<string>filename, <table>opts, <bool>safe)`  
 Creates new GridFS file for writing.  
 If `safe` is true (default), all chunks will be inserted only when you call gridfsfile:close().  
 If `safe` is false, chunks will be inserted into db with every gridfsfile:write(...),  

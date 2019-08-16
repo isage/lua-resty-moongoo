@@ -87,12 +87,20 @@ Also, möngö is mongolian currency, and mungu is god in Swahili.
 ## Requirements
 
 * LuaJit or Lua with [BitOp](http://bitop.luajit.org/)
-* [lua-libbson](https://github.com/isage/lua-cbson)
+* [lua-cbson](https://github.com/isage/lua-cbson)
 * lua-posix
 
 To use outside of OpenResty you'll also need:  
 * LuaSocket
 * LuaCrypto
+
+## Installation
+
+Install package using luarocks 
+
+```bash
+luarocks install https://raw.githubusercontent.com/isage/lua-resty-moongoo/master/rockspec/lua-resty-moongoo-git-1.rockspec
+```
 
 ## Usage
 

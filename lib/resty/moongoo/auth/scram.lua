@@ -83,7 +83,7 @@ local function auth(db, username, password)
   if not r['done'] then
     r, err = db:_cmd("saslContinue", {
       conversationId = conversationId ;
-      payload =  cbson.binary("") ;
+      payload =  ngx.encode_base64("");
     })
 
     if not r then

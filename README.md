@@ -82,6 +82,7 @@ Also, möngö is mongolian currency, and mungu is god in Swahili.
     * [write](#write)
     * [close](#close-1)
 * [Authors](#authors)
+* [Sponsors](#sponsors)
 * [Copyright and License](#copyright-and-license)
 
 ## Requirements
@@ -466,6 +467,12 @@ Epifanov Ivan <isage.dna@gmail.com>
 
 [Back to TOC](#table-of-contents)
 
+
+## Sponsors
+
+[@dev0pz](https://github.com/dev0pz)
+
+[Back to TOC](#table-of-contents)
 
 
 ## Copyright and License

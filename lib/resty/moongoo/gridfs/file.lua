@@ -107,22 +107,23 @@ end
 
 function _M.write(self, data)
   if self._read_only then
-    return nil, "Can't write to read-only file"
+    return false, "Can't write to read-only file"
   end
 
   if self._closed then
-    return nil, "Can't write to closed file"
+    return false, "Can't write to closed file"
   end
 
   self._buffer = self._buffer .. data
   self._meta.length = self._meta.length + data:len()
 
   while self._buffer:len() >= self:chunk_size() do
-    local r, res = self:_chunk()
+    local r, err = self:_chunk()
     if not r then
-      return nil, err
+      return false, err
     end
   end
+  return true
 end
 
 function _M.close(self)

@@ -133,7 +133,10 @@ function _M.close(self)
   end
   self._closed = true
 
-  self:_chunk()  -- enqueue/write last chunk of data
+  local r, err = self:_chunk()  -- enqueue/write last chunk of data
+  if not r then
+    return nil, err
+  end
 
   if self._write_only then
     -- insert all collected chunks
@@ -200,7 +203,7 @@ end
 function _M._chunk(self)
   local chunk = self._buffer:sub(1,self:chunk_size())
   if not chunk then
-    return
+    return false
   end
   self._buffer = self._buffer:sub(self:chunk_size()+1)
   local n = self._n
@@ -210,11 +213,17 @@ function _M._chunk(self)
   if self._write_only then
     -- collect chunks for insert
     table.insert(self._chunks, {files_id = self:_files_id(), n = cbson.uint(n), data = data})
-    return true
   else
     -- insert immidiately, so we can read back (ugh)
-    return self._gridfs._chunks:insert({{files_id = self:_files_id(), n = cbson.uint(n), data = data}})
+    local ids, num = self._gridfs._chunks:insert({files_id = self:_files_id(), n = cbson.uint(n), data = data})
+    if not ids then
+      return false, num
+    end
+    if num < 1 then
+      return false, "Duplicate file ID"
+    end
   end
+  return true
 end
 
 

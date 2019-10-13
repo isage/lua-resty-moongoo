@@ -22,11 +22,11 @@ function _M.list(self)
 end
 
 function _M.remove(self, id)
-  local r,err = self._files:remove({_id = cbson.oid(id)})
+  local r,err = self._files:remove({_id = id})
   if not r then
     return nil, "Failed to remove file metadata: "..err
   end
-  r,err = self._chunks:remove({files_id = cbson.oid(id)});
+  r,err = self._chunks:remove({files_id = id})
   if not r then
     return nil, "Failed to remove file chunks: "..err
   end
@@ -45,7 +45,7 @@ function _M.find_version(self, name, version)
 end
 
 function _M.open(self, id)
-  return gfsfile.open(self, cbson.oid(id))
+  return gfsfile.open(self, id)
 end
 
 

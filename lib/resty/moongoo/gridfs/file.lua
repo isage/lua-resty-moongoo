@@ -155,9 +155,11 @@ function _M.close(self)
   local file_md5 = res.md5
   -- insert metadata
   local ids, n = self._gridfs._files:insert(self:_metadata(file_md5))
-
   if not ids then
     return nil, n
+  end
+  if n < 1 then
+    return nil, "Duplicate file ID"
   end
   -- return metadata
   return ids[1]

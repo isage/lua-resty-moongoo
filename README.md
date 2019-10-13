@@ -374,7 +374,7 @@ Finds the distinct values for a specified field, according to query.
 Returns array, containing unique filenames.
 
 #### remove
-`<cbson.uint>num, <string>err = gridfsobj:remove(<cbson.oid or string>id)`  
+`<cbson.uint>num, <string>err = gridfsobj:remove(<cbson.oid or self-chosen type>id)`  
 Removes file from GridFS.  
 Returns number of chunks removed.
 
@@ -386,7 +386,7 @@ E.g. for file with 3 versions: 0, 1, 2 = -3, -2, -1
 0 or -3 is oldest, while  -1 or 2 - newest.
 
 #### open
-`<gridfs.file>gridfsfile, <string>err = gridfsobj:open(<cbson.oid or string>id)`  
+`<gridfs.file>gridfsfile, <string>err = gridfsobj:open(<cbson.oid or self-chosen type>id)`  
 Opens GridFS file for reading.
 
 #### create
@@ -454,7 +454,7 @@ Returns full file contents.
 Writes data to GridFS file.
 
 #### close
-`<cbson.oid>id, <string>error = gridfsfile:close()`  
+`<cbson.oid or self-chosen type>id, <string>error = gridfsfile:close()`  
 Finalizes file by writing queued chunks and metadata.
 
 [Back to TOC](#table-of-contents)

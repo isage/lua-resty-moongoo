@@ -202,8 +202,8 @@ end
 
 function _M._chunk(self)
   local chunk = self._buffer:sub(1,self:chunk_size())
-  if not chunk then
-    return false
+  if chunk:len() == 0 then
+    return true
   end
   self._buffer = self._buffer:sub(self:chunk_size()+1)
   local n = self._n

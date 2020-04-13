@@ -58,7 +58,7 @@ end
 
 function _M.connect(self)
   if self.connection then return self end
-
+  local query, err
   -- foreach host
   for k, v in ipairs(self.hosts) do
     -- connect
